@@ -1,0 +1,5 @@
+title,cve,cvss,asset,assetCriticality,internetFacing,scanner,firstSeen
+,CVE-2024-0001,7.5,web-01,high,true,Nessus,2026-10-01
+Bad CVSS Value,CVE-2024-0002,99,web-02,high,true,Nessus,2026-10-02
+Wrong Criticality Word,CVE-2024-0003,5.0,web-03,extreme,false,Qualys,2026-10-03
+=cmd /c calc,CVE-2024-0004,6.0,web-04,medium,true,OpenVAS,2026-10-04
