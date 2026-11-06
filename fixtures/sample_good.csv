@@ -1,0 +1,21 @@
+title,cve,cvss,asset,assetCriticality,internetFacing,scanner,firstSeen
+Outdated OpenSSL,CVE-2024-1111,9.8,web-01,critical,true,Nessus,2026-10-01
+Remote Code Execution in Apache,CVE-2024-2222,9.0,web-01,critical,true,Nessus,2026-10-02
+SQL Injection in Login Form,CVE-2024-3333,8.5,db-01,high,false,Qualys,2026-10-03
+Privilege Escalation via Kernel Bug,CVE-2024-4444,7.8,app-01,high,false,Nessus,2026-10-04
+Cross-Site Scripting in Dashboard,CVE-2024-5555,6.1,web-02,medium,true,OpenVAS,2026-10-05
+Insecure Deserialization,CVE-2024-6666,8.1,app-02,high,true,Nessus,2026-10-06
+Weak SSH Key Length,CVE-2024-7777,5.3,db-02,medium,false,Qualys,2026-10-07
+Directory Traversal in File Server,CVE-2024-8888,7.5,file-01,high,true,Nessus,2026-10-08
+Outdated jQuery Version,CVE-2024-9999,4.3,web-03,low,true,OpenVAS,2026-10-09
+Unpatched Windows SMB,CVE-2024-1010,9.3,win-01,critical,false,Nessus,2026-10-10
+Default Credentials on Router,CVE-2024-1020,8.8,net-01,critical,true,Nessus,2026-10-11
+Exposed Admin Panel,CVE-2024-1030,6.5,web-04,medium,true,Qualys,2026-10-12
+Log4Shell Vulnerability,CVE-2021-4428,10.0,app-03,critical,true,Nessus,2026-10-13
+Broken Authentication in API,CVE-2024-1050,7.2,api-01,high,true,OpenVAS,2026-10-14
+Path Traversal in Upload Module,CVE-2024-1060,6.8,app-04,medium,false,Nessus,2026-10-15
+Missing HSTS Header,CVE-2024-1070,3.1,web-05,low,true,Qualys,2026-10-16
+Buffer Overflow in PDF Parser,CVE-2024-1080,8.4,app-05,high,false,Nessus,2026-10-17
+Outdated OpenSSL,CVE-2024-1111,9.8,web-01,critical,true,Nessus,2026-10-18
+Remote Code Execution in Apache,CVE-2024-2222,9.0,web-01,critical,true,Nessus,2026-10-19
+SQL Injection in Login Form,CVE-2024-3333,8.5,db-01,high,false,Qualys,2026-10-20
