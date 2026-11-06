@@ -1,0 +1,202 @@
+[
+  {
+    "title": "Outdated OpenSSL",
+    "cve": "CVE-2024-1111",
+    "cvss": 9.8,
+    "asset": "web-01",
+    "assetCriticality": "critical",
+    "internetFacing": true,
+    "scanner": "Nessus",
+    "firstSeen": "2026-10-01"
+  },
+  {
+    "title": "Remote Code Execution in Apache",
+    "cve": "CVE-2024-2222",
+    "cvss": 9.0,
+    "asset": "web-01",
+    "assetCriticality": "critical",
+    "internetFacing": true,
+    "scanner": "Nessus",
+    "firstSeen": "2026-10-02"
+  },
+  {
+    "title": "SQL Injection in Login Form",
+    "cve": "CVE-2024-3333",
+    "cvss": 8.5,
+    "asset": "db-01",
+    "assetCriticality": "high",
+    "internetFacing": false,
+    "scanner": "Qualys",
+    "firstSeen": "2026-10-03"
+  },
+  {
+    "title": "Privilege Escalation via Kernel Bug",
+    "cve": "CVE-2024-4444",
+    "cvss": 7.8,
+    "asset": "app-01",
+    "assetCriticality": "high",
+    "internetFacing": false,
+    "scanner": "Nessus",
+    "firstSeen": "2026-10-04"
+  },
+  {
+    "title": "Cross-Site Scripting in Dashboard",
+    "cve": "CVE-2024-5555",
+    "cvss": 6.1,
+    "asset": "web-02",
+    "assetCriticality": "medium",
+    "internetFacing": true,
+    "scanner": "OpenVAS",
+    "firstSeen": "2026-10-05"
+  },
+  {
+    "title": "Insecure Deserialization",
+    "cve": "CVE-2024-6666",
+    "cvss": 8.1,
+    "asset": "app-02",
+    "assetCriticality": "high",
+    "internetFacing": true,
+    "scanner": "Nessus",
+    "firstSeen": "2026-10-06"
+  },
+  {
+    "title": "Weak SSH Key Length",
+    "cve": "CVE-2024-7777",
+    "cvss": 5.3,
+    "asset": "db-02",
+    "assetCriticality": "medium",
+    "internetFacing": false,
+    "scanner": "Qualys",
+    "firstSeen": "2026-10-07"
+  },
+  {
+    "title": "Directory Traversal in File Server",
+    "cve": "CVE-2024-8888",
+    "cvss": 7.5,
+    "asset": "file-01",
+    "assetCriticality": "high",
+    "internetFacing": true,
+    "scanner": "Nessus",
+    "firstSeen": "2026-10-08"
+  },
+  {
+    "title": "Outdated jQuery Version",
+    "cve": "CVE-2024-9999",
+    "cvss": 4.3,
+    "asset": "web-03",
+    "assetCriticality": "low",
+    "internetFacing": true,
+    "scanner": "OpenVAS",
+    "firstSeen": "2026-10-09"
+  },
+  {
+    "title": "Unpatched Windows SMB",
+    "cve": "CVE-2024-1010",
+    "cvss": 9.3,
+    "asset": "win-01",
+    "assetCriticality": "critical",
+    "internetFacing": false,
+    "scanner": "Nessus",
+    "firstSeen": "2026-10-10"
+  },
+  {
+    "title": "Default Credentials on Router",
+    "cve": "CVE-2024-1020",
+    "cvss": 8.8,
+    "asset": "net-01",
+    "assetCriticality": "critical",
+    "internetFacing": true,
+    "scanner": "Nessus",
+    "firstSeen": "2026-10-11"
+  },
+  {
+    "title": "Exposed Admin Panel",
+    "cve": "CVE-2024-1030",
+    "cvss": 6.5,
+    "asset": "web-04",
+    "assetCriticality": "medium",
+    "internetFacing": true,
+    "scanner": "Qualys",
+    "firstSeen": "2026-10-12"
+  },
+  {
+    "title": "Log4Shell Vulnerability",
+    "cve": "CVE-2021-4428",
+    "cvss": 10.0,
+    "asset": "app-03",
+    "assetCriticality": "critical",
+    "internetFacing": true,
+    "scanner": "Nessus",
+    "firstSeen": "2026-10-13"
+  },
+  {
+    "title": "Broken Authentication in API",
+    "cve": "CVE-2024-1050",
+    "cvss": 7.2,
+    "asset": "api-01",
+    "assetCriticality": "high",
+    "internetFacing": true,
+    "scanner": "OpenVAS",
+    "firstSeen": "2026-10-14"
+  },
+  {
+    "title": "Path Traversal in Upload Module",
+    "cve": "CVE-2024-1060",
+    "cvss": 6.8,
+    "asset": "app-04",
+    "assetCriticality": "medium",
+    "internetFacing": false,
+    "scanner": "Nessus",
+    "firstSeen": "2026-10-15"
+  },
+  {
+    "title": "Missing HSTS Header",
+    "cve": "CVE-2024-1070",
+    "cvss": 3.1,
+    "asset": "web-05",
+    "assetCriticality": "low",
+    "internetFacing": true,
+    "scanner": "Qualys",
+    "firstSeen": "2026-10-16"
+  },
+  {
+    "title": "Buffer Overflow in PDF Parser",
+    "cve": "CVE-2024-1080",
+    "cvss": 8.4,
+    "asset": "app-05",
+    "assetCriticality": "high",
+    "internetFacing": false,
+    "scanner": "Nessus",
+    "firstSeen": "2026-10-17"
+  },
+  {
+    "title": "Outdated OpenSSL",
+    "cve": "CVE-2024-1111",
+    "cvss": 9.8,
+    "asset": "web-01",
+    "assetCriticality": "critical",
+    "internetFacing": true,
+    "scanner": "Nessus",
+    "firstSeen": "2026-10-18"
+  },
+  {
+    "title": "Remote Code Execution in Apache",
+    "cve": "CVE-2024-2222",
+    "cvss": 9.0,
+    "asset": "web-01",
+    "assetCriticality": "critical",
+    "internetFacing": true,
+    "scanner": "Nessus",
+    "firstSeen": "2026-10-19"
+  },
+  {
+    "title": "SQL Injection in Login Form",
+    "cve": "CVE-2024-3333",
+    "cvss": 8.5,
+    "asset": "db-01",
+    "assetCriticality": "high",
+    "internetFacing": false,
+    "scanner": "Qualys",
+    "firstSeen": "2026-10-20"
+  }
+]
