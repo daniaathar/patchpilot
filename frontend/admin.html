@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PatchPilot | Admin</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="admin">
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="top" id="top"></header>
+  <main id="main">
+    <h1>Admin</h1>
+    <div id="message" role="alert" aria-live="assertive"></div>
+    <div id="admin-content">
+      <section class="card">
+        <h2>Rules (SLA days and score weights)</h2>
+        <form id="config-form">
+          <div class="grid cols-4">
+            <div class="field"><label for="sla-critical">SLA Critical (days)</label><input type="number" id="sla-critical" min="1" max="365" required></div>
+            <div class="field"><label for="sla-high">SLA High (days)</label><input type="number" id="sla-high" min="1" max="365" required></div>
+            <div class="field"><label for="sla-medium">SLA Medium (days)</label><input type="number" id="sla-medium" min="1" max="365" required></div>
+            <div class="field"><label for="sla-low">SLA Low (days)</label><input type="number" id="sla-low" min="1" max="365" required></div>
+          </div>
+          <div class="grid cols-4">
+            <div class="field"><label for="w-cvss">CVSS multiplier</label><input type="number" id="w-cvss" min="0" max="10" step="0.1" required></div>
+            <div class="field"><label for="w-internet">Internet facing points</label><input type="number" id="w-internet" min="0" max="50" required></div>
+            <div class="field"><label for="w-high">High asset points</label><input type="number" id="w-high" min="0" max="50" required></div>
+            <div class="field"><label for="w-critical">Critical asset points</label><input type="number" id="w-critical" min="0" max="50" required></div>
+          </div>
+          <button type="submit">Save changes</button>
+        </form>
+      </section>
+      <section class="card">
+        <h2>Audit log</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">Time</th><th scope="col">User</th><th scope="col">Action</th><th scope="col">Result</th><th scope="col">Details</th></tr></thead>
+            <tbody id="audit"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+  <dialog id="confirm"><form method="dialog">
+    <h2>Are you sure?</h2><p id="confirm-text"></p>
+    <div class="btn-row"><button value="yes" id="confirm-yes">Yes, continue</button><button value="no" class="secondary">Cancel</button></div>
+  </form></dialog>
+  <script src="app.js"></script>
+</body>
+</html>

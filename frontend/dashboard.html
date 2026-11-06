@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PatchPilot | Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body data-page="dashboard">
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="top" id="top"></header>
+  <main id="main">
+    <h1>Dashboard</h1>
+    <div id="message" role="alert" aria-live="assertive"></div>
+
+    <section aria-label="Key numbers" class="grid cols-4" style="margin-bottom:16px">
+      <div class="card stat"><div class="num" id="m-total">-</div><div class="lbl">Total findings</div></div>
+      <div class="card stat"><div class="num" id="m-open">-</div><div class="lbl">Open (active)</div></div>
+      <div class="card stat"><div class="num" id="m-overdue">-</div><div class="lbl">Overdue</div></div>
+      <div class="card stat"><div class="num" id="m-sla">-</div><div class="lbl">SLA compliance</div></div>
+    </section>
+
+    <section aria-label="Charts" class="grid cols-2">
+      <div class="card"><h2>Findings by priority</h2><div class="chart-box"><canvas id="chart-priority" role="img" aria-label="Donut chart of findings by priority"></canvas></div></div>
+      <div class="card"><h2>Findings by status</h2><div class="chart-box"><canvas id="chart-status" role="img" aria-label="Bar chart of findings by status"></canvas></div></div>
+    </section>
+
+    <section class="card" aria-label="Findings list">
+      <h2>Findings</h2>
+      <form class="filters" id="filters" onsubmit="return false">
+        <div><label for="f-status">Status</label>
+          <select id="f-status"><option value="">All</option></select></div>
+        <div><label for="f-priority">Priority</label>
+          <select id="f-priority"><option value="">All</option></select></div>
+        <div><label for="f-owner">Owner</label>
+          <select id="f-owner"><option value="">All</option></select></div>
+        <div><label for="f-search">Search title / CVE / asset</label>
+          <input type="text" id="f-search" maxlength="60"></div>
+        <div class="check"><input type="checkbox" id="f-overdue"><label for="f-overdue">Overdue only</label></div>
+      </form>
+      <p class="muted" id="count" style="margin:12px 0 6px"></p>
+      <div class="table-wrap">
+        <table>
+          <caption class="muted" style="text-align:left;padding-bottom:6px">Click a finding ID to open details.</caption>
+          <thead><tr>
+            <th scope="col">ID</th><th scope="col">Title</th><th scope="col">Asset</th><th scope="col">Priority</th>
+            <th scope="col">Score</th><th scope="col">Status</th><th scope="col">Owner</th><th scope="col">Due</th>
+          </tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+      <div class="btn-row" style="margin-top:14px" id="export-row"></div>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

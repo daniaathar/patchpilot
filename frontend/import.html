@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PatchPilot | Import</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="import">
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="top" id="top"></header>
+  <main id="main">
+    <h1>Import findings</h1>
+    <div id="message" role="alert" aria-live="assertive"></div>
+    <section class="card">
+      <p class="muted">Upload a scanner export as <strong>.csv</strong> or <strong>.json</strong> (maximum 1 MB). Required columns: title, cve, cvss, asset, assetCriticality, scanner.</p>
+      <form id="import-form">
+        <div class="field">
+          <label for="file">Choose file</label>
+          <input type="file" id="file" accept=".csv,.json" required>
+        </div>
+        <button type="submit" id="import-btn">Import file</button>
+      </form>
+    </section>
+    <section class="card" id="result" hidden aria-live="polite">
+      <h2>Import result</h2>
+      <div id="result-summary"></div>
+      <div class="table-wrap" id="errors-wrap" hidden>
+        <table>
+          <thead><tr><th scope="col">Row</th><th scope="col">Code</th><th scope="col">Problem</th></tr></thead>
+          <tbody id="errors"></tbody>
+        </table>
+      </div>
+      <div class="table-wrap" id="dups-wrap" hidden>
+        <h2 style="margin-top:14px">Duplicates removed</h2>
+        <table>
+          <thead><tr><th scope="col">Finding</th><th scope="col">Matches</th><th scope="col">Reason</th></tr></thead>
+          <tbody id="dups"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

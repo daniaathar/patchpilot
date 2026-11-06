@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PatchPilot | Finding detail</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="detail">
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="top" id="top"></header>
+  <main id="main">
+    <p><a href="dashboard.html">&larr; Back to dashboard</a></p>
+    <h1 id="title">Finding</h1>
+    <div id="message" role="alert" aria-live="assertive"></div>
+
+    <section class="grid cols-2">
+      <div class="card"><h2>Summary</h2><dl class="kv" id="summary"></dl></div>
+      <div class="card"><h2>Why this score?</h2><ul class="plain" id="reasons"></ul>
+        <h2 style="margin-top:16px">Deadline</h2><p id="deadline"></p></div>
+    </section>
+
+    <section class="card" id="actions-card" hidden>
+      <h2>Actions</h2>
+      <div class="btn-row" id="actions"></div>
+      <form id="reason-form" hidden style="margin-top:14px">
+        <div class="field"><label for="reason-text" id="reason-label">Written reason</label>
+          <textarea id="reason-text" maxlength="500" required></textarea></div>
+        <div class="field" id="end-date-field" hidden><label for="end-date">Accepted until (end date)</label>
+          <input type="date" id="end-date"></div>
+        <div class="btn-row"><button type="submit">Save</button><button type="button" class="secondary" id="reason-cancel">Cancel</button></div>
+      </form>
+    </section>
+
+    <section class="card" id="retest-card" hidden>
+      <h2>Retest</h2>
+      <form id="retest-form">
+        <div class="field"><label for="retest-result">Result</label>
+          <select id="retest-result"><option value="pass">Pass (fixed)</option><option value="fail">Fail (reopen)</option></select></div>
+        <div class="field"><label for="retest-evidence">Evidence (required, max 500 characters)</label>
+          <textarea id="retest-evidence" maxlength="500" required></textarea></div>
+        <button type="submit">Submit retest</button>
+      </form>
+    </section>
+
+    <section class="card"><h2>History</h2><ul class="timeline" id="history"></ul></section>
+  </main>
+  <dialog id="confirm"><form method="dialog">
+    <h2 id="confirm-title">Are you sure?</h2><p id="confirm-text"></p>
+    <div class="btn-row"><button value="yes" id="confirm-yes">Yes, continue</button><button value="no" class="secondary">Cancel</button></div>
+  </form></dialog>
+  <script src="app.js"></script>
+</body>
+</html>

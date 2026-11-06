@@ -1,0 +1,20 @@
+{
+  "total": 15,
+  "open": 12,
+  "overdue": 4,
+  "byPriority": {
+    "Critical": 3,
+    "High": 6,
+    "Low": 3,
+    "Medium": 3
+  },
+  "byOwner": {
+    "Web Team": 7,
+    "Database Team": 3,
+    "App Team": 3,
+    "Unassigned": 2
+  },
+  "slaPercent": 69.2,
+  "avgDaysToFix": 12,
+  "reopenRate": 0.5
+}

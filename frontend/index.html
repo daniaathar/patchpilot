@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PatchPilot | Login</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="login">
+  <a class="skip" href="#main">Skip to content</a>
+  <main id="main">
+    <div class="card login-box">
+      <h1>PatchPilot</h1>
+      <p class="muted">Vulnerability Remediation Manager. Sign in to continue.</p>
+      <div id="message" role="alert" aria-live="assertive"></div>
+      <form id="login-form" autocomplete="off">
+        <div class="field">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" required maxlength="50" autocomplete="username">
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required maxlength="100" autocomplete="current-password">
+        </div>
+        <button type="submit">Sign in</button>
+      </form>
+      <p class="muted" id="mock-hint"></p>
+    </div>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

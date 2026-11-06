@@ -1,0 +1,515 @@
+[
+  {
+    "id": "F-0001",
+    "title": "Outdated OpenSSL",
+    "cve": "CVE-2024-1111",
+    "cvss": 9.8,
+    "asset": "web-01",
+    "assetCriticality": "critical",
+    "internetFacing": true,
+    "scanner": "Nessus",
+    "firstSeen": "2026-10-20",
+    "status": "open",
+    "priorityScore": 98.8,
+    "priority": "Critical",
+    "dueDate": "2026-10-27",
+    "owner": "Web Team",
+    "reasons": [
+      "CVSS 9.8 gives 58.8 points",
+      "Critical asset adds 30",
+      "Internet facing adds 10",
+      "Total 98.8 means Critical (rule v1)",
+      "Asset web-01 matches owner rule, assigned to Web Team"
+    ],
+    "history": [
+      {
+        "action": "imported",
+        "user": "analyst",
+        "time": "2026-10-20T09:00:00Z",
+        "note": "Imported from Nessus"
+      }
+    ]
+  },
+  {
+    "id": "F-0002",
+    "title": "Apache HTTPD path traversal",
+    "cve": "CVE-2024-2222",
+    "cvss": 8.1,
+    "asset": "web-02",
+    "assetCriticality": "high",
+    "internetFacing": true,
+    "scanner": "Qualys",
+    "firstSeen": "2026-10-25",
+    "status": "in_progress",
+    "priorityScore": 78.6,
+    "priority": "High",
+    "dueDate": "2026-11-08",
+    "owner": "Web Team",
+    "reasons": [
+      "CVSS 8.1 gives 48.6 points",
+      "High asset adds 20",
+      "Internet facing adds 10",
+      "Total 78.6 means High (rule v1)",
+      "Asset web-02 matches owner rule, assigned to Web Team"
+    ],
+    "history": [
+      {
+        "action": "imported",
+        "user": "analyst",
+        "time": "2026-10-25T09:00:00Z",
+        "note": "Imported from Qualys"
+      },
+      {
+        "action": "start_work",
+        "user": "analyst",
+        "time": "2026-10-26T10:30:00Z",
+        "note": "Work started"
+      }
+    ]
+  },
+  {
+    "id": "F-0003",
+    "title": "PostgreSQL privilege escalation",
+    "cve": "CVE-2024-3333",
+    "cvss": 7.2,
+    "asset": "db-01",
+    "assetCriticality": "critical",
+    "internetFacing": false,
+    "scanner": "Nessus",
+    "firstSeen": "2026-10-30",
+    "status": "open",
+    "priorityScore": 73.2,
+    "priority": "High",
+    "dueDate": "2026-11-13",
+    "owner": "Database Team",
+    "reasons": [
+      "CVSS 7.2 gives 43.2 points",
+      "Critical asset adds 30",
+      "Not internet facing adds 0",
+      "Total 73.2 means High (rule v1)",
+      "Asset db-01 matches owner rule, assigned to Database Team"
+    ],
+    "history": [
+      {
+        "action": "imported",
+        "user": "analyst",
+        "time": "2026-10-30T09:00:00Z",
+        "note": "Imported from Nessus"
+      }
+    ]
+  },
+  {
+    "id": "F-0004",
+    "title": "Weak TLS cipher suites",
+    "cve": "CVE-2023-4444",
+    "cvss": 5.3,
+    "asset": "web-01",
+    "assetCriticality": "critical",
+    "internetFacing": true,
+    "scanner": "OpenVAS",
+    "firstSeen": "2026-10-10",
+    "status": "open",
+    "priorityScore": 71.8,
+    "priority": "High",
+    "dueDate": "2026-10-24",
+    "owner": "Web Team",
+    "reasons": [
+      "CVSS 5.3 gives 31.8 points",
+      "Critical asset adds 30",
+      "Internet facing adds 10",
+      "Total 71.8 means High (rule v1)",
+      "Asset web-01 matches owner rule, assigned to Web Team"
+    ],
+    "history": [
+      {
+        "action": "imported",
+        "user": "analyst",
+        "time": "2026-10-10T09:00:00Z",
+        "note": "Imported from OpenVAS"
+      }
+    ]
+  },
+  {
+    "id": "F-0005",
+    "title": "SSH weak key exchange",
+    "cve": "CVE-2023-5555",
+    "cvss": 4.3,
+    "asset": "app-01",
+    "assetCriticality": "medium",
+    "internetFacing": false,
+    "scanner": "Qualys",
+    "firstSeen": "2026-09-20",
+    "status": "open",
+    "priorityScore": 35.8,
+    "priority": "Low",
+    "dueDate": "2026-12-19",
+    "owner": "App Team",
+    "reasons": [
+      "CVSS 4.3 gives 25.8 points",
+      "Medium asset adds 10",
+      "Not internet facing adds 0",
+      "Total 35.8 means Low (rule v1)",
+      "Asset app-01 matches owner rule, assigned to App Team"
+    ],
+    "history": [
+      {
+        "action": "imported",
+        "user": "analyst",
+        "time": "2026-09-20T09:00:00Z",
+        "note": "Imported from Qualys"
+      }
+    ]
+  },
+  {
+    "id": "F-0006",
+    "title": "Log4j remote code execution",
+    "cve": "CVE-2021-44228",
+    "cvss": 10,
+    "asset": "app-02",
+    "assetCriticality": "high",
+    "internetFacing": true,
+    "scanner": "Nessus",
+    "firstSeen": "2026-10-05",
+    "status": "reopened",
+    "priorityScore": 90,
+    "priority": "Critical",
+    "dueDate": "2026-11-11",
+    "owner": "App Team",
+    "reasons": [
+      "CVSS 10 gives 60 points",
+      "High asset adds 20",
+      "Internet facing adds 10",
+      "Total 90 means Critical (rule v1)",
+      "Asset app-02 matches owner rule, assigned to App Team"
+    ],
+    "history": [
+      {
+        "action": "imported",
+        "user": "analyst",
+        "time": "2026-10-05T09:00:00Z",
+        "note": "Imported from Nessus"
+      },
+      {
+        "action": "mark_fixed",
+        "user": "analyst",
+        "time": "2026-10-08T12:00:00Z",
+        "note": "Patch applied"
+      },
+      {
+        "action": "retest_fail",
+        "user": "analyst",
+        "time": "2026-11-04T15:00:00Z",
+        "note": "Still vulnerable on port 8080"
+      }
+    ]
+  },
+  {
+    "id": "F-0007",
+    "title": "MySQL default credentials",
+    "cve": "CVE-2024-6666",
+    "cvss": 9.1,
+    "asset": "db-02",
+    "assetCriticality": "high",
+    "internetFacing": false,
+    "scanner": "Nessus",
+    "firstSeen": "2026-10-28",
+    "status": "in_progress",
+    "priorityScore": 74.6,
+    "priority": "High",
+    "dueDate": "2026-11-11",
+    "owner": "Database Team",
+    "reasons": [
+      "CVSS 9.1 gives 54.6 points",
+      "High asset adds 20",
+      "Not internet facing adds 0",
+      "Total 74.6 means High (rule v1)",
+      "Asset db-02 matches owner rule, assigned to Database Team"
+    ],
+    "history": [
+      {
+        "action": "imported",
+        "user": "analyst",
+        "time": "2026-10-28T09:00:00Z",
+        "note": "Imported from Nessus"
+      },
+      {
+        "action": "start_work",
+        "user": "analyst",
+        "time": "2026-10-29T10:30:00Z",
+        "note": "Work started"
+      }
+    ]
+  },
+  {
+    "id": "F-0008",
+    "title": "Nginx request smuggling",
+    "cve": "CVE-2024-7777",
+    "cvss": 6.5,
+    "asset": "web-03",
+    "assetCriticality": "medium",
+    "internetFacing": true,
+    "scanner": "Qualys",
+    "firstSeen": "2026-10-01",
+    "status": "open",
+    "priorityScore": 59,
+    "priority": "Medium",
+    "dueDate": "2026-10-31",
+    "owner": "Web Team",
+    "reasons": [
+      "CVSS 6.5 gives 39 points",
+      "Medium asset adds 10",
+      "Internet facing adds 10",
+      "Total 59 means Medium (rule v1)",
+      "Asset web-03 matches owner rule, assigned to Web Team"
+    ],
+    "history": [
+      {
+        "action": "imported",
+        "user": "analyst",
+        "time": "2026-10-01T09:00:00Z",
+        "note": "Imported from Qualys"
+      }
+    ]
+  },
+  {
+    "id": "F-0009",
+    "title": "Outdated jQuery library",
+    "cve": "CVE-2020-11022",
+    "cvss": 4,
+    "asset": "web-02",
+    "assetCriticality": "high",
+    "internetFacing": true,
+    "scanner": "OpenVAS",
+    "firstSeen": "2026-09-01",
+    "status": "fixed",
+    "priorityScore": 54,
+    "priority": "Medium",
+    "dueDate": "2026-10-01",
+    "owner": "Web Team",
+    "reasons": [
+      "CVSS 4 gives 24 points",
+      "High asset adds 20",
+      "Internet facing adds 10",
+      "Total 54 means Medium (rule v1)",
+      "Asset web-02 matches owner rule, assigned to Web Team"
+    ],
+    "history": [
+      {
+        "action": "imported",
+        "user": "analyst",
+        "time": "2026-09-01T09:00:00Z",
+        "note": "Imported from OpenVAS"
+      },
+      {
+        "action": "retest_pass",
+        "user": "analyst",
+        "time": "2026-09-13T16:00:00Z",
+        "note": "Library upgraded, scan clean"
+      }
+    ]
+  },
+  {
+    "id": "F-0010",
+    "title": "SMB signing disabled",
+    "cve": "CVE-2024-8888",
+    "cvss": 5.9,
+    "asset": "file-01",
+    "assetCriticality": "medium",
+    "internetFacing": false,
+    "scanner": "Nessus",
+    "firstSeen": "2026-10-15",
+    "status": "accepted_risk",
+    "priorityScore": 45.4,
+    "priority": "Medium",
+    "dueDate": "2026-11-14",
+    "owner": "Unassigned",
+    "reasons": [
+      "CVSS 5.9 gives 35.4 points",
+      "Medium asset adds 10",
+      "Not internet facing adds 0",
+      "Total 45.4 means Medium (rule v1)",
+      "No owner rule matched file-01, so Unassigned"
+    ],
+    "history": [
+      {
+        "action": "imported",
+        "user": "analyst",
+        "time": "2026-10-15T09:00:00Z",
+        "note": "Imported from Nessus"
+      },
+      {
+        "action": "accept_risk",
+        "user": "admin",
+        "time": "2026-10-17T11:00:00Z",
+        "note": "Accepted until 2027-02-01: legacy file server, isolated VLAN"
+      }
+    ]
+  },
+  {
+    "id": "F-0011",
+    "title": "Self-signed certificate",
+    "cve": "CVE-2022-9999",
+    "cvss": 3.1,
+    "asset": "app-01",
+    "assetCriticality": "low",
+    "internetFacing": false,
+    "scanner": "Qualys",
+    "firstSeen": "2026-10-12",
+    "status": "false_positive",
+    "priorityScore": 18.6,
+    "priority": "Low",
+    "dueDate": "2027-01-10",
+    "owner": "App Team",
+    "reasons": [
+      "CVSS 3.1 gives 18.6 points",
+      "Low asset adds 0",
+      "Not internet facing adds 0",
+      "Total 18.6 means Low (rule v1)",
+      "Asset app-01 matches owner rule, assigned to App Team"
+    ],
+    "history": [
+      {
+        "action": "imported",
+        "user": "analyst",
+        "time": "2026-10-12T09:00:00Z",
+        "note": "Imported from Qualys"
+      },
+      {
+        "action": "mark_false_positive",
+        "user": "analyst",
+        "time": "2026-10-13T14:00:00Z",
+        "note": "Internal test certificate by design"
+      }
+    ]
+  },
+  {
+    "id": "F-0012",
+    "title": "Redis exposed without auth",
+    "cve": "CVE-2024-1212",
+    "cvss": 8.8,
+    "asset": "cache-01",
+    "assetCriticality": "high",
+    "internetFacing": true,
+    "scanner": "Nessus",
+    "firstSeen": "2026-11-01",
+    "status": "open",
+    "priorityScore": 82.8,
+    "priority": "Critical",
+    "dueDate": "2026-11-08",
+    "owner": "Unassigned",
+    "reasons": [
+      "CVSS 8.8 gives 52.8 points",
+      "High asset adds 20",
+      "Internet facing adds 10",
+      "Total 82.8 means Critical (rule v1)",
+      "No owner rule matched cache-01, so Unassigned"
+    ],
+    "history": [
+      {
+        "action": "imported",
+        "user": "analyst",
+        "time": "2026-11-01T09:00:00Z",
+        "note": "Imported from Nessus"
+      }
+    ]
+  },
+  {
+    "id": "F-0013",
+    "title": "Directory listing enabled",
+    "cve": "CVE-2023-1313",
+    "cvss": 2.7,
+    "asset": "web-03",
+    "assetCriticality": "low",
+    "internetFacing": true,
+    "scanner": "OpenVAS",
+    "firstSeen": "2026-10-18",
+    "status": "open",
+    "priorityScore": 26.2,
+    "priority": "Low",
+    "dueDate": "2027-01-16",
+    "owner": "Web Team",
+    "reasons": [
+      "CVSS 2.7 gives 16.2 points",
+      "Low asset adds 0",
+      "Internet facing adds 10",
+      "Total 26.2 means Low (rule v1)",
+      "Asset web-03 matches owner rule, assigned to Web Team"
+    ],
+    "history": [
+      {
+        "action": "imported",
+        "user": "analyst",
+        "time": "2026-10-18T09:00:00Z",
+        "note": "Imported from OpenVAS"
+      }
+    ]
+  },
+  {
+    "id": "F-0014",
+    "title": "Kernel local privilege escalation",
+    "cve": "CVE-2024-1414",
+    "cvss": 7.8,
+    "asset": "db-01",
+    "assetCriticality": "critical",
+    "internetFacing": false,
+    "scanner": "Qualys",
+    "firstSeen": "2026-11-03",
+    "status": "in_progress",
+    "priorityScore": 76.8,
+    "priority": "High",
+    "dueDate": "2026-11-17",
+    "owner": "Database Team",
+    "reasons": [
+      "CVSS 7.8 gives 46.8 points",
+      "Critical asset adds 30",
+      "Not internet facing adds 0",
+      "Total 76.8 means High (rule v1)",
+      "Asset db-01 matches owner rule, assigned to Database Team"
+    ],
+    "history": [
+      {
+        "action": "imported",
+        "user": "analyst",
+        "time": "2026-11-03T09:00:00Z",
+        "note": "Imported from Qualys"
+      },
+      {
+        "action": "start_work",
+        "user": "analyst",
+        "time": "2026-11-04T10:30:00Z",
+        "note": "Work started"
+      }
+    ]
+  },
+  {
+    "id": "F-0015",
+    "title": "Outdated PHP version",
+    "cve": "CVE-2023-1515",
+    "cvss": 6.1,
+    "asset": "web-02",
+    "assetCriticality": "high",
+    "internetFacing": true,
+    "scanner": "Nessus",
+    "firstSeen": "2026-10-22",
+    "status": "open",
+    "priorityScore": 66.6,
+    "priority": "High",
+    "dueDate": "2026-11-05",
+    "owner": "Web Team",
+    "reasons": [
+      "CVSS 6.1 gives 36.6 points",
+      "High asset adds 20",
+      "Internet facing adds 10",
+      "Total 66.6 means High (rule v1)",
+      "Asset web-02 matches owner rule, assigned to Web Team"
+    ],
+    "history": [
+      {
+        "action": "imported",
+        "user": "analyst",
+        "time": "2026-10-22T09:00:00Z",
+        "note": "Imported from Nessus"
+      }
+    ]
+  }
+]

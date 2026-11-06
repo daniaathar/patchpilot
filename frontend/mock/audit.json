@@ -1,0 +1,98 @@
+[
+  {
+    "id": 1,
+    "time": "2026-11-04T08:55:00Z",
+    "user": "analyst",
+    "action": "login",
+    "result": "success",
+    "details": "Login ok"
+  },
+  {
+    "id": 2,
+    "time": "2026-11-04T09:02:00Z",
+    "user": "analyst",
+    "action": "import",
+    "result": "success",
+    "details": "sample_good.csv: 17 imported, 3 duplicates"
+  },
+  {
+    "id": 3,
+    "time": "2026-11-04T09:10:00Z",
+    "user": "analyst",
+    "action": "import",
+    "result": "failure",
+    "details": "sample_bad.csv rejected: row 4 cvss out of range"
+  },
+  {
+    "id": 4,
+    "time": "2026-11-04T09:30:00Z",
+    "user": "unknown",
+    "action": "login",
+    "result": "failure",
+    "details": "Failed login for username admin"
+  },
+  {
+    "id": 5,
+    "time": "2026-11-04T10:00:00Z",
+    "user": "analyst",
+    "action": "status_change",
+    "result": "success",
+    "details": "F-0002 start_work"
+  },
+  {
+    "id": 6,
+    "time": "2026-11-04T15:00:00Z",
+    "user": "analyst",
+    "action": "retest",
+    "result": "success",
+    "details": "F-0006 retest fail, reopened"
+  },
+  {
+    "id": 7,
+    "time": "2026-11-05T09:00:00Z",
+    "user": "viewer",
+    "action": "access_admin",
+    "result": "denied",
+    "details": "Viewer tried GET /api/audit"
+  },
+  {
+    "id": 8,
+    "time": "2026-11-05T09:20:00Z",
+    "user": "admin",
+    "action": "login",
+    "result": "success",
+    "details": "Login ok"
+  },
+  {
+    "id": 9,
+    "time": "2026-11-05T09:45:00Z",
+    "user": "admin",
+    "action": "config_change",
+    "result": "success",
+    "details": "Critical SLA days 7 to 5"
+  },
+  {
+    "id": 10,
+    "time": "2026-11-05T11:00:00Z",
+    "user": "admin",
+    "action": "status_change",
+    "result": "success",
+    "details": "F-0010 accept_risk until 2027-02-01"
+  },
+  {
+    "id": 11,
+    "time": "2026-11-05T16:30:00Z",
+    "user": "analyst",
+    "action": "export",
+    "result": "success",
+    "details": "Sanitized CSV exported"
+  },
+  {
+    "id": 12,
+    "time": "2026-11-05T17:00:00Z",
+    "user": "analyst",
+    "action": "logout",
+    "result": "success",
+    "details": "Logout"
+  }
+]
