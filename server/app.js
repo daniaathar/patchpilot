@@ -131,7 +131,7 @@ app.use('/api', (req, res) => {
 });
 
 // ── Static frontend ───────────────────────────────────────────────────────────
-const frontendDir = path.join(__dirname, '../../frontend');
+const frontendDir = path.join(__dirname, '../frontend');
 app.use(express.static(frontendDir));
 
 // Fall-through to index.html for SPA routing
