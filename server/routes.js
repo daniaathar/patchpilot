@@ -155,7 +155,8 @@ router.post('/import', requireAuth, requireRole('analyst', 'admin'),
         const sla = engine.calcSla(f, config, now);
         f.dueDate = sla.dueDate;
 
-        const ownership = engine.assignOwner(f, null);
+        // No second argument = Easha's default owner rules (null would throw).
+        const ownership = engine.assignOwner(f);
         f.owner = ownership.owner;
 
         f.id = nextFindingId(db);
@@ -220,33 +221,37 @@ router.post('/findings/:id/status', requireAuth, requireRole('analyst', 'admin')
   }
 
   const finding = dbRowToFinding(row);
+  // Only these fields are taken from the client. Any 'user' / 'actorId' in the
+  // body is ignored on purpose: the actor always comes from the session.
   const { action, reason, endDate } = req.body || {};
 
-  const result = engine.changeStatus(
-    finding, action,
-    { reason, endDate, user: user.username },
-    user.role
+  // changeStatus() returns the whole updated finding (or { error, message }).
+  const updated = engine.changeStatus(
+    toEngineFinding(finding), action,
+    { reason, endDate },
+    user.role,
+    { actorId: String(user.id) }   // logged-in user's id from the session (must be a string)
   );
 
-  if (result.error) {
-    return res.status(result.error === 'E_FORBIDDEN' ? 403 : 400).json({
-      error:   result.error,
-      message: result.message
+  if (updated.error) {
+    return res.status(updated.error === 'E_FORBIDDEN' ? 403 : 400).json({
+      error:   updated.error,
+      message: updated.message
     });
   }
 
-  // Append event to history
-  const history = finding.history || [];
-  history.push(result.event);
+  // The new audit entry is the last item of the returned events array.
+  const events = updated.events || [];
+  const event  = events[events.length - 1];
 
   db.prepare(`
     UPDATE findings SET status = ?, history = ? WHERE id = ?
-  `).run(result.finding.status, JSON.stringify(history), req.params.id);
+  `).run(updated.status, JSON.stringify(events), req.params.id);
 
   audit('status_change', user.username, 'success',
-    { findingId: req.params.id, action, newStatus: result.finding.status }, db);
+    { findingId: req.params.id, action, newStatus: updated.status }, db);
 
-  res.json({ message: 'Status updated.', finding: result.finding, event: result.event });
+  res.json({ message: 'Status updated.', finding: fromEngineFinding(updated), event });
 });
 
 // POST /api/findings/:id/retest
@@ -266,30 +271,35 @@ router.post('/findings/:id/retest', requireAuth, requireRole('analyst', 'admin')
     return res.status(400).json({ error: 'E_VALIDATION', message: 'result (pass/fail) and evidence are required.' });
   }
 
-  const retestResult = engine.handleRetest(finding, result, evidence);
+  // handleRetest() returns the whole updated finding (or { error, message }).
+  // Pass the admin SLA config so a failed retest uses the configured deadline.
+  const updated = engine.handleRetest(
+    toEngineFinding(finding), result, evidence, new Date(), loadConfig(db)
+  );
 
-  if (retestResult.error) {
-    return res.status(400).json({ error: retestResult.error, message: retestResult.message });
+  if (updated.error) {
+    return res.status(400).json({ error: updated.error, message: updated.message });
   }
 
-  // Update finding in DB
-  const history = finding.history || [];
-  history.push({
-    action:   `retest_${result}`,
-    user:     user.username,
-    time:     new Date().toISOString(),
-    note:     retestResult.reason
-  });
+  // The new audit entry is the last item of the returned events array.
+  const events = updated.events || [];
+  const event  = events[events.length - 1];
 
   db.prepare(`
     UPDATE findings SET status = ?, dueDate = ?, history = ? WHERE id = ?
-  `).run(retestResult.status, retestResult.newDueDate || finding.dueDate,
-         JSON.stringify(history), req.params.id);
+  `).run(updated.status, updated.dueDate || finding.dueDate,
+         JSON.stringify(events), req.params.id);
 
   audit('retest', user.username, 'success',
-    { findingId: req.params.id, result, newStatus: retestResult.status }, db);
+    { findingId: req.params.id, result, newStatus: updated.status }, db);
 
-  res.json({ message: 'Retest recorded.', status: retestResult.status, reason: retestResult.reason });
+  res.json({
+    message: 'Retest recorded.',
+    status:  updated.status,
+    reason:  event ? event.note : undefined,
+    finding: fromEngineFinding(updated),
+    event
+  });
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -463,6 +473,21 @@ function dbRowToFinding(row) {
     reasons:         safeParseJson(row.reasons, []),
     history:         safeParseJson(row.history, [])
   };
+}
+
+/**
+ * Easha's workflow/retest functions keep the audit trail in finding.events,
+ * while the DB column (and the API/frontend) call it history.
+ * These two helpers translate between the shapes.
+ */
+function toEngineFinding(finding) {
+  const { history, ...rest } = finding;
+  return { ...rest, events: Array.isArray(history) ? history : [] };
+}
+
+function fromEngineFinding(updated) {
+  const { events, ...rest } = updated;
+  return { ...rest, history: Array.isArray(events) ? events : [] };
 }
 
 /**
