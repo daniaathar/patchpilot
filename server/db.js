@@ -73,6 +73,21 @@ function initDb() {
     );
   `);
 
+  // Additive migration: preserve existing findings and distinguish pending verification.
+  const columns = new Set(db.pragma('table_info(findings)').map(c => c.name));
+  for (const name of ['fixedAt', 'endDate', 'slaStart', 'scoreConfig']) {
+    if (!columns.has(name)) db.exec(`ALTER TABLE findings ADD COLUMN ${name} TEXT`);
+  }
+  const migrate = db.transaction(() => {
+    for (const row of db.prepare("SELECT id,status,history FROM findings WHERE status='fixed' AND fixedAt IS NULL").all()) {
+      let events; try { events = JSON.parse(row.history || '[]'); } catch { events = []; }
+      const last = events.slice().reverse().find(e => ['mark_fixed','retest_pass','retest_fail'].includes(e.action));
+      if (last && last.action === 'retest_pass') db.prepare('UPDATE findings SET fixedAt=? WHERE id=?').run(last.time, row.id);
+      else db.prepare("UPDATE findings SET status='awaiting_retest' WHERE id=?").run(row.id);
+    }
+  });
+  migrate();
+
   // ── audit_log ──────────────────────────────────────────────────────────────
   db.exec(`
     CREATE TABLE IF NOT EXISTS audit_log (
@@ -84,6 +99,9 @@ function initDb() {
       details  TEXT
     );
   `);
+
+  db.exec(`CREATE TRIGGER IF NOT EXISTS audit_no_update BEFORE UPDATE ON audit_log BEGIN SELECT RAISE(ABORT,'Audit is append-only'); END;
+  CREATE TRIGGER IF NOT EXISTS audit_no_delete BEFORE DELETE ON audit_log BEGIN SELECT RAISE(ABORT,'Audit is append-only'); END;`);
 
   // ── config ─────────────────────────────────────────────────────────────────
   db.exec(`
