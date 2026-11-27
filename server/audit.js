@@ -15,8 +15,8 @@
 
 // Keys that must never appear in logged details
 const SENSITIVE_KEYS = new Set([
-  'password', 'password_hash', 'passwordHash', 'token',
-  'secret', 'csrfToken', 'csrf', 'authorization'
+  'password', 'password_hash', 'passwordhash', 'token',
+  'secret', 'csrftoken', 'csrf', 'authorization', 'session_secret', 'cookie', 'set-cookie'
 ]);
 
 /**
