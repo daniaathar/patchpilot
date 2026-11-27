@@ -32,8 +32,8 @@ const request = require('supertest');
 const app    = require('../server/app');
 const { getDb } = require('../server/db');
 
-const GOOD_CSV = path.join(__dirname, '../../Hareem/fixtures/sample_good.csv');
-const BAD_CSV  = path.join(__dirname, '../../Hareem/fixtures/sample_bad.csv');
+const GOOD_CSV = path.join(__dirname, '../fixtures/sample_good.csv');
+const BAD_CSV  = path.join(__dirname, '../fixtures/sample_bad.csv');
 
 let analyst, viewer, admin;          // logged-in supertest agents
 let analystCsrf, viewerCsrf, adminCsrf;
@@ -144,7 +144,7 @@ test('TF-3b – viewer cannot import (E_FORBIDDEN) and nothing is inserted', asy
 });
 
 test('TF-3c – POST without CSRF token is blocked', async () => {
-  const res = await analyst.post('/api/import').attach('file', GOOD_CSV); // no X-CSRF-Token
+  const res = await analyst.post('/api/import').attach('file', fs.readFileSync(GOOD_CSV), 'sample_good.csv'); // no X-CSRF-Token
 
   console.log('TF-3c Evidence:', { input: 'analyst POST /api/import with no CSRF token',
                                    expected: '403 E_FORBIDDEN', actual: { status: res.status, error: res.body.error } });
