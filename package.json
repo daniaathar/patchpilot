@@ -1,12 +1,12 @@
 {
   "name": "patchpilot-rida",
   "version": "1.0.0",
-  "description": "PatchPilot – Backend Server (Express, SQLite, Auth, API)",
+  "description": "PatchPilot \u2013 Backend Server (Express, SQLite, Auth, API)",
   "main": "server/app.js",
   "type": "commonjs",
   "scripts": {
     "start": "node server/app.js",
-    "test": "node --test tests/t6_auth.test.js && node --test tests/tfinal.test.js",
+    "test": "node --test tests/*.test.js",
     "test:t6": "node --test tests/t6_auth.test.js",
     "test:tfinal": "node --test tests/tfinal.test.js",
     "seed": "node server/db.js"
