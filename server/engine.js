@@ -58,8 +58,8 @@ function buildScoreConfig(dbConfig) {
       medium:   parseFloat(dbConfig.assetPoints_medium   || 10),
       high:     parseFloat(dbConfig.assetPoints_high     || 20),
       critical: parseFloat(dbConfig.assetPoints_critical || 30)
-    }
-    // maxScore and priorityBands use scoreFinding's own defaults
+    },
+    maxScore: 100, priorityBands: {critical:80, high:60, medium:40}, ruleVersion: 'v1'
   };
 }
 
