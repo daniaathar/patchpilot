@@ -1,186 +1,44 @@
-# PatchPilot – Setup Guide
-**Owner:** Rida | Class 2, Group 8
+# PatchPilot — setup and recovery
 
----
+Class 2, Group 8. This is a **local coursework demonstration with synthetic data only**. Do not expose it to other machines or use the sample credentials with real vulnerability data. The server binds to IPv4 loopback. Use Node.js 22 and npm; native SQLite/bcrypt dependencies are installed for the current operating system.
 
-## Prerequisites
+## Windows / VS Code
 
-- [Node.js](https://nodejs.org/) v18 or later (tested on v22)
-- npm v9 or later (bundled with Node.js)
-- VS Code (recommended) or any terminal
+1. Extract the ZIP into a new folder; open the folder containing package.json in VS Code.
+2. Run `npm ci` in PowerShell (internet access may be required for dependencies).
+3. Run `npm start`. A fresh database is seeded automatically. Browse to `http://localhost:3000` (if localhost fails, use `http://127.0.0.1:3000`).
+4. Existing demo credentials: `admin / Admin@1234`, `analyst / Analyst@1234`, `viewer / Viewer@1234`. These are deliberately public test credentials, not production secrets. Do not reuse elsewhere.
+5. Import `fixtures/sample_good.csv` as Admin or Analyst. A fresh database gives 17 findings and 3 duplicates.
 
----
+The public landing page, sign-in and registration UI retain the existing dark theme. Charts and the optional web font use remote CDN resources; connectivity is needed for the chart library. No live scanners or external targets are used.
 
-## Step-by-Step Installation
+## Account creation (optional local synthetic demo)
 
-### 1. Clone or unzip the project
+By default new self-registration is disabled. To explicitly enable it, stop the server and run in the same terminal:
 
-Place the project folder on your machine. The structure should look like:
-
-```
-patchpilot/
-  Hareem/
-  Rida/
-  Easha/      (if integrated)
-  Dania/      (if integrated)
-```
-
-### 2. Install Rida's backend dependencies
-
-Open a terminal **inside the `Rida/` folder** and run:
-
-```bash
-npm install
-```
-
-This installs: express, better-sqlite3, bcrypt, express-session, helmet, express-rate-limit, multer, csrf.
-
-### 3. Initialise the database
-
-The database is created and seeded automatically when the server starts.
-To seed it manually (useful after resetting):
-
-```bash
-node server/db.js
-```
-
-You should see:
-```
-[DB] Seeded user: admin (admin)
-[DB] Seeded user: analyst (analyst)
-[DB] Seeded user: viewer (viewer)
-[DB] Database initialised at ...patchpilot.db
-```
-
-### 4. Start the server
-
-From inside the `Rida/` folder:
-
-```bash
+```powershell
+$env:PATCHPILOT_ALLOW_REGISTRATION = '1'
 npm start
 ```
 
-Or directly:
+The endpoint requires a pre-auth session CSRF token, a valid unique username, a password of 12–72 UTF-8 bytes (minimum 12 characters), rate limits, and a server-assigned Viewer role. Registration provides access to the shared demo dataset; there is no organisation separation. Disable it again using `$env:PATCHPILOT_ALLOW_REGISTRATION = '0'` and restart. An administrator approval/user-management module is outside the brief.
 
-```bash
-node server/app.js
-```
+## Session secret
 
-The server starts at: **http://localhost:3000**
+When no environment variable is supplied, a cryptographically random 48-byte secret is generated for each server process. No fixed fallback is used. Sessions expire on restart because the session store is in memory. To set a secret explicitly, run `$env:SESSION_SECRET = node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"` before starting the server. Never commit or print the value. Browser sessions use HttpOnly, SameSite=Lax cookies and a 30-minute cookie lifetime. Local HTTP only; deployment is outside scope.
 
-You will see:
-```
-[PatchPilot] Server running at http://localhost:3000
-[WARNING] SESSION_SECRET env var is not set. Using insecure dev default.
-```
+## Existing database / safe recovery
 
-The SESSION_SECRET warning is expected in local dev. See the Security section below.
+Stop the old server before copying or backing up the database. Keep its `patchpilot.db`, `patchpilot.db-wal` and `patchpilot.db-shm` together if sidecars remain after clean shutdown. Never overwrite the only copy. The final ZIP contains no database or credentials derived from existing users. To retain old synthetic records, copy the backed-up files into the new server folder before first startup. Startup adds columns without dropping tables. A legacy fixed record without a successful retest becomes awaiting_retest; a successful historic retest can restore fixedAt. A legacy accepted risk without an expiry reopens on the next authenticated request. Historical scoring snapshots that were never recorded remain unknown. The old copy remains your rollback point.
 
-### 5. Open in VS Code (optional)
+To run a separate fresh demo, use `$env:PATCHPILOT_DB = "$PWD\server\demo.db"` and start; do not delete the original DB. Restart with the same path to verify persistence. Clear the variable using `Remove-Item Env:PATCHPILOT_DB` when finished.
 
-1. Open VS Code.
-2. File → Open Folder → select the `Rida/` folder (or the root `patchpilot/` folder).
-3. Open a new terminal in VS Code (`` Ctrl+` ``).
-4. Run `npm start`.
+## Tests and evaluation
 
----
-
-## Default Login Credentials
-
-| Role    | Username  | Password       |
-|---------|-----------|----------------|
-| Admin   | `admin`   | `Admin@1234`   |
-| Analyst | `analyst` | `Analyst@1234` |
-| Viewer  | `viewer`  | `Viewer@1234`  |
-
-> **Important:** Change these passwords before any shared or production use.
-
----
-
-## Running the Tests
-
-From inside the `Rida/` folder:
-
-```bash
-npm test
-```
-
-This runs T6 (authorization tests) and T-final (robustness tests).
-Expected output: **7/7 T6 PASS** and **16/16 T-final PASS**.
-
-To run individual suites:
-```bash
-npm run test:t6       # Authorization tests only
-npm run test:tfinal   # Robustness tests only
-```
-
----
-
-## Resetting the Database
-
-To wipe all findings and audit entries and start fresh:
-
-1. Stop the server.
-2. Delete the database file:
-   ```bash
-   # Windows
-   del Rida\server\patchpilot.db
-   
-   # macOS/Linux
-   rm Rida/server/patchpilot.db
-   ```
-3. Restart the server — it will recreate and reseed automatically.
-
----
-
-## Setting the Session Secret (Production)
-
-In any shared or deployed environment, set the `SESSION_SECRET` environment variable to a long random string:
-
-**Windows (PowerShell):**
 ```powershell
-$env:SESSION_SECRET = "my-long-random-secret-here"
-node server/app.js
+npm test
+node evaluate_rules.js
+node full_bench.js
 ```
 
-**macOS/Linux:**
-```bash
-SESSION_SECRET="my-long-random-secret-here" node server/app.js
-```
-
----
-
-## Port Configuration
-
-The server defaults to port **3000**. To use a different port:
-
-```bash
-# Windows
-$env:PORT = 4000; node server/app.js
-
-# macOS/Linux
-PORT=4000 node server/app.js
-```
-
----
-
-## Project Structure Reference
-
-```
-Rida/
-  server/
-    app.js       Main Express server (start here)
-    db.js        SQLite setup and seeding
-    auth.js      Login/session/role middleware
-    audit.js     Append-only audit logging
-    routes.js    All API endpoints
-    engine.js    Integration with Hareem's + Easha's engine functions
-    stubs.js     Placeholder stubs (used during development only)
-  tests/
-    t6_auth.test.js    Authorization tests (T6)
-    tfinal.test.js     Robustness tests (T-final)
-  docs/
-    setup_guide.md     This file
-    threat_model.md    Security threat model and data-flow diagram
-  package.json
-```
+Integration tests use temporary SQLite files, not the working DB. Use `npm run test:tfinal` for the original integration suite. Preserve output using `npm test 2>&1 | Tee-Object test-results.txt`. Node 22 supports `node --experimental-test-coverage --test tests/*.test.js` for optional code coverage. The rule evaluation reports coverage of priority classes and controlled false positives/negatives, not real-world scanner accuracy.
