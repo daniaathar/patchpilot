@@ -34,6 +34,8 @@ app.use(helmet({
     directives: {
       ...helmet.contentSecurityPolicy.getDefaultDirectives(),
       'script-src': ["'self'", 'https://cdn.jsdelivr.net', 'https://cdnjs.cloudflare.com'],
+      'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+      'font-src': ["'self'", 'https://fonts.gstatic.com'],
       'upgrade-insecure-requests': null
     }
   }
@@ -44,16 +46,13 @@ app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: false, limit: '2mb' }));
 
 // ── Session configuration ────────────────────────────────────────────────────
-// SESSION_SECRET must be set via the SESSION_SECRET environment variable in
-// any real deployment. The fallback below is for local dev/testing only.
-const SESSION_SECRET = process.env.SESSION_SECRET;
-if (!SESSION_SECRET) {
-  console.warn('[WARNING] SESSION_SECRET env var is not set. Using insecure dev default. Set it before deploying.');
-}
+// A random per-process secret is safe for this local demo and invalidates sessions on restart.
+const SESSION_SECRET = process.env.SESSION_SECRET || require('crypto').randomBytes(48).toString('hex');
+// Without an environment secret, sessions intentionally expire on restart.
 
 app.use(session({
   name:   'patchpilot.sid',
-  secret: SESSION_SECRET || 'dev-only-secret-change-before-deploy',
+  secret: SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: {
@@ -91,7 +90,10 @@ app.use('/api', (req, res, next) => {
   const secret = req.session && req.session.csrfSecret;
   const token  = req.headers['x-csrf-token'] || (req.body && req.body._csrf);
 
-  if (!secret || !token || !tokens.verify(secret, token)) {
+  if (!secret || typeof token !== 'string' || !tokens.verify(secret, token)) {
+    audit('csrf_denied', req.session?.user?.username || 'anonymous', 'denied', {path:req.path, method:req.method}, getDb());
+    // Drain rejected multipart requests to avoid aborting clients mid-upload.
+    req.resume();
     return res.status(403).json({
       error:   'E_FORBIDDEN',
       message: 'Invalid or missing CSRF token.'
@@ -123,6 +125,7 @@ app.use('/api/login',  loginLimiter);
 app.use('/api/import', importLimiter);
 
 // ── API routes ────────────────────────────────────────────────────────────────
+app.use('/api', (req, res, next) => { res.set('Cache-Control', 'no-store'); next(); });
 app.use('/api', apiRoutes);
 
 // Any other /api path: safe JSON 404 instead of the HTML page
@@ -172,7 +175,7 @@ app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
 
 // ── Start ─────────────────────────────────────────────────────────────────────
 if (require.main === module) {
-  app.listen(PORT, () => {
+  app.listen(PORT, '127.0.0.1', () => {
     console.log(`[PatchPilot] Server running at http://localhost:${PORT}`);
   });
 }
