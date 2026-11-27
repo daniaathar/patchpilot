@@ -16,7 +16,7 @@ Default rules: Score = CVSS x 6 + asset points (low 0, medium 10, high 20, criti
 ## 2. Read the audit log
 1. Open **Admin** and scroll to **Audit log** (newest first).
 2. Columns: time, user, action, result, details.
-3. Look for these actions: `login` (including failures), `import`, `status_change`, `retest`, `config_change`, `export`, and `access_admin` with result `denied` (someone without permission tried an admin page).
+3. Look for these actions: `login` (including failures), `import`, `status_change`, `retest`, `config_change`, `export`, and `access_denied` with result `denied` (someone without permission tried an admin page).
 4. The log can only be added to. Nobody can edit or delete rows. Passwords and secrets are never shown.
 
 *Screenshot: 07-audit-log.png*
@@ -36,3 +36,6 @@ Default rules: Score = CVSS x 6 + asset points (low 0, medium 10, high 20, criti
 If a viewer opens the Admin page they see a generic "no permission" message, and the attempt appears in the audit log.
 
 *Screenshot: 08-viewer-denied.png*
+
+## Risk and registration
+Risk acceptance requires a future UTC date and reopens at expiry (on authenticated API access). Unknown legacy expiry also reopens. New registration is off by default; see setup guide for opt-in local synthetic demo. Scoring changes save previous decisions and new configuration in finding history.
