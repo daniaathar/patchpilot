@@ -60,16 +60,16 @@
 
 | # | Threat | Attack Scenario | Fix Applied |
 |---|--------|----------------|-------------|
-| 1 | **SQL Injection** | Attacker sends `' OR '1'='1` in a login field to dump the database or bypass auth. | All database queries use `better-sqlite3` prepared statements with `?` placeholders. String interpolation into SQL is never used anywhere in the codebase. |
+| 1 | **SQL Injection** | Attacker sends `' OR '1'='1` in a login field to dump the database or bypass auth. | All database queries use `better-sqlite3` prepared statements with `?` placeholders. Schema migrations interpolate only fixed internal column names, not user input. |
 | 2 | **Stolen / Weak Password** | Attacker brute-forces or reuses a leaked password to log in as admin. | Passwords are stored as bcrypt hashes (12 rounds). Login is rate-limited to 5 attempts per minute per IP (`express-rate-limit`); further attempts get `E_RATE` until the window resets. |
-| 3 | **Cross-Site Request Forgery (CSRF)** | Attacker tricks a logged-in analyst into clicking a link that submits a malicious form to the API. | The `csrf` package generates a per-session CSRF secret. Every state-changing POST/PUT must include the matching `X-CSRF-Token` header. Requests without a valid token are rejected with `E_FORBIDDEN`. |
+| 3 | **Cross-Site Request Forgery (CSRF)** | Attacker tricks a logged-in analyst into clicking a link that submits a malicious form to the API. | The `csrf` package generates a per-session CSRF secret. State-changing POST/PUT other than login must include the matching `X-CSRF-Token` header. Requests without a valid token are rejected with `E_FORBIDDEN`. |
 | 4 | **Oversized / Malicious File Upload** | Attacker uploads a 500 MB file or a disguised executable to crash the server or exploit a parser. | `multer` enforces a hard 1 MB file size limit and an extension whitelist (`.csv`, `.json` only). Oversized files return `E_TOO_BIG` (413). Wrong extensions return `E_VALIDATION` (400). |
 | 5 | **CSV Formula Injection** | Attacker embeds `=cmd /c calc` in a CVE field so that an analyst exporting to Excel executes it. | The importer rejects any row whose title, cve, asset or scanner starts with `=`, `+`, `-` or `@` (clear row error), and `sanitizeText` in importer.js also strips those characters as a second layer. The export route sanitises every cell before writing the CSV response. |
 | 6 | **Viewer Accessing Admin Pages** | A viewer-role user manually navigates to `/api/audit` or `/api/config` to read logs or change settings. | `requireRole('admin')` middleware checks the role from the server-side session on every request. Viewers and analysts receive a generic `E_FORBIDDEN` response. Every denied attempt is written to the audit log. |
 | 7 | **Audit Log Leaking Secrets** | A developer accidentally logs a password or session token, exposing it to anyone who can read the audit table. | `audit.js` runs `sanitiseDetails()` on every entry before writing. Fields named `password`, `token`, `secret`, `csrfToken`, or `authorization` are replaced with `[REDACTED]`. |
 | 8 | **Brute-Force Login** | Attacker runs an automated script attempting thousands of password guesses per minute. | `express-rate-limit` limits the `/api/login` endpoint to 5 requests per minute per IP. After the limit is reached the response is `E_RATE`. Every failed login attempt is written to the audit log with the username and timestamp. |
 | 9 | **Session Fixation** | Attacker pre-plants a known session ID and tricks a user into authenticating with it, gaining access to the session. | `express-session` calls `req.session.regenerate()` immediately after a successful login, replacing the pre-auth session with a new one. The old session ID is invalidated. |
-| 10 | **Information Disclosure via Stack Traces** | An unhandled exception returns a full stack trace in the HTTP response, exposing internal file paths and library versions. | The global error handler in `app.js` catches all unhandled errors and returns only `{ error: 'E_SERVER', message: 'An unexpected error occurred.' }`. Stack traces are written to `console.error` (server-side log) only, never to the client. |
+| 10 | **Information Disclosure via Stack Traces** | An unhandled exception returns a full stack trace in the HTTP response, exposing internal file paths and library versions. | The global error handler in `app.js` catches all unhandled errors and returns only `{ error: 'E_SERVER', message: 'An unexpected error occurred.' }`. Error messages are written to `console.error` (server-side log) only, never to the client. |
 
 ---
 
@@ -81,3 +81,11 @@
 | B → C (API to Database) | SQLite queries | Prepared statements only, principle of least privilege (one local process) |
 | File upload (A → B) | `POST /api/import` | Multer size + extension filter, content validation in engine |
 | Role escalation (within B) | Route handlers | `requireAuth` + `requireRole` middleware on every protected route |
+
+## Final hardening
+- Known demo credentials are public test fixtures; bind to loopback and use only synthetic data. Random per-process session secret replaces static fallback.
+- Unauthorized self-registration: disabled by default, explicit demo opt-in; role supplied by client is rejected and Viewer is assigned on server.
+- Workflow bypass: retest only when awaiting_retest; verified completion date saved after pass.
+- Risk acceptance expiry: persisted, reopens at expiry on next authenticated API call.
+- Audit updates/deletes blocked by SQLite triggers; not tamper-proof against someone with filesystem access.
+- Login route is exempt from token verification for existing login protocol; session regenerated on success. This is a local demo, not production hardening.
