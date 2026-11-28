@@ -52,7 +52,7 @@ function computeMetrics(findings, now = new Date()) {
     const status = finding.status || 'open';
 
     // Count open and reopened findings.
-    if (status === 'open' || status === 'reopened') {
+    if (['open', 'reopened', 'in_progress', 'awaiting_retest'].includes(status)) {
       metrics.open++;
     }
 
