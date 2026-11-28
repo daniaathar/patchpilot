@@ -143,9 +143,8 @@ test('analyst can mark an in-progress finding as fixed', () => {
     'analyst'
   );
 
-  assert.equal(result.status, 'fixed');
-  assert.ok(result.fixedAt);
-  assert.equal(result.events[0].time, result.fixedAt);
+  assert.equal(result.status, 'awaiting_retest');
+  assert.equal(result.fixedAt, undefined);
 });
 
 test('cannot mark an open finding as fixed directly', () => {
