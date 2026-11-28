@@ -10,6 +10,10 @@ function handleRetest(finding, result, evidence, now = new Date(), config = {}) 
     };
   }
 
+  if (finding.status !== 'awaiting_retest') {
+    return { error: 'E_VALIDATION', message: 'Finding must be awaiting retest.' };
+  }
+
   if (!['pass', 'fail'].includes(result)) {
     return {
       error: 'E_VALIDATION',
@@ -79,6 +83,7 @@ if (result === 'pass') {
     );
 
     updatedFinding.dueDate = freshSla.dueDate;
+    updatedFinding.slaStart = retestDate.toISOString().slice(0, 10);
   }
 
   return updatedFinding;

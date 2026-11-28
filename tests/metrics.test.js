@@ -195,3 +195,8 @@ test('rejects an invalid current date', () => {
     TypeError
   );
 });
+test('active metric includes work in progress and pending verification', () => {
+  const result = computeMetrics(['open','in_progress','reopened','awaiting_retest','fixed'].map(status => createFinding({status})), NOW);
+  assert.equal(result.open,4);
+  assert.equal(result.fixed,1);
+});

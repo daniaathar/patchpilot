@@ -63,7 +63,7 @@ function calcSla(finding, config, now) {
     : DEFAULT_SLA_DAYS[priority];
 
   // If firstSeen is missing or invalid, use the current date.
-  const firstSeen = toUtcDate(finding.firstSeen) ?? today;
+  const firstSeen = toUtcDate(finding.slaStart || finding.firstSeen) ?? today;
 
   const dueTimestamp = firstSeen + days * 86400000;
   const dueDate = new Date(dueTimestamp).toISOString().slice(0, 10);

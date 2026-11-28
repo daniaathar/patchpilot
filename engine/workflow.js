@@ -5,6 +5,7 @@ const VALID_STATUSES = [
   'open',
   'in_progress',
   'reopened',
+  'awaiting_retest',
   'fixed',
   'accepted_risk',
   'false_positive'
@@ -68,7 +69,7 @@ function changeStatus(finding, action, data = {}, role, context = {}) {
     },
     mark_fixed: {
       allowedStatuses: ['in_progress'],
-      newStatus: 'fixed',
+      newStatus: 'awaiting_retest',
       allowedRoles: ['analyst', 'admin']
     }
   };
@@ -162,14 +163,11 @@ function changeStatus(finding, action, data = {}, role, context = {}) {
   };
 
   // Keep fixedAt consistent with the finding's current status.
-  if (action === 'mark_fixed') {
-    updatedFinding.fixedAt = timestamp;
-  } else {
-    delete updatedFinding.fixedAt;
-  }
+  delete updatedFinding.fixedAt;
 
   if (action === 'accept_risk') {
     updatedFinding.endDate = data.endDate;
+    event.endDate = data.endDate;
   }
 
   return updatedFinding;

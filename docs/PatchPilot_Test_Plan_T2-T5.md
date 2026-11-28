@@ -1,45 +1,172 @@
-# PatchPilot — Test Plan & Results (FR-4, FR-5, FR-6, FR-7)
+# PatchPilot Test Plan — T2 to T5
 
-Scope: the mandatory evaluation cases T2–T5 that belong to aap's functions (`calcSla`, `changeStatus`, `handleRetest`), run against the actual code in `engine/`. T1 (duplicates) and T6/T-final belong to Hareem and Rida respectively and aren't included here.
+## 1. Purpose
 
-All results below were produced by actually running the code on 2026-11-07 (`node` v22.23.4), not written by hand. The automated unit test suite (79 tests, `node --test tests/*.test.js`) covers these same cases plus edge cases; this table is the human-readable record the report needs.
+This document describes the tests for the PatchPilot engine responsibilities assigned to this workstream:
 
-| ID | Scenario | Input | Expected | Actual | Evidence | Pass/Fail |
-|---|---|---|---|---|---|---|
-| T2 | Overdue SLA | Critical finding, `firstSeen: 2026-10-08`, `status: open`, checked `now = 2026-11-07` (Critical SLA = 7 days, so due 2026-10-15, 23 days in the past) | `overdue: true`, `dueDate: 2026-10-15` | `{"dueDate":"2026-10-15","daysLeft":-23,"overdue":true,"reason":"Critical finding SLA is 7 days from firstSeen. Due: 2026-10-15."}` | `calcSla()` output above, direct run | **Pass** |
-| T3a | Accepted risk (admin, allowed) | `admin` calls `accept_risk` on an open finding with a reason and `endDate: 2026-12-31` | Status → `accepted_risk`, event logged with actor and reason, `endDate` stored | `{"status":"accepted_risk","events":[{"action":"accept_risk","user":"admin-01","time":"2026-11-07T12:51:24.678Z","note":"Compensating control in place; mitigated by WAF rule."}],"endDate":"2026-12-31"}` | `changeStatus()` output above, direct run | **Pass** |
-| T3b | Accepted risk (analyst, denied) | `analyst` calls `accept_risk` on an open finding | Rejected with `E_FORBIDDEN`, no status change | `{"error":"E_FORBIDDEN","message":"Your role is not allowed to perform this action."}` | `changeStatus()` output above, direct run | **Pass** |
-| T4 | False positive | `analyst` calls `mark_false_positive` with a reason on an open finding, then that finding is checked by `calcSla` | Status → `false_positive`, event logged; finding is excluded from the overdue count going forward | Status became `false_positive`; subsequent `calcSla` on it returned `"overdue":false` (excluded status) | `changeStatus()` + `calcSla()` output above, direct run | **Pass** |
-| T5 | Reopen on failed retest | High-priority finding, `status: in_progress`, `firstSeen: 2026-10-01`, retested with `result: 'fail'` and evidence text, `now = 2026-11-07` | Status → `reopened`, retest event logged with evidence, fresh SLA deadline calculated (High = 14 days from the retest date) | `{"status":"reopened","events":[{"action":"retest_fail","user":"system","time":"2026-11-07T12:00:00.000Z","note":"Vulnerability still reproducible with curl against /api/v1/token."}],"retestEvidence":"Vulnerability still reproducible with curl against /api/v1/token.","dueDate":"2026-11-21"}` | `handleRetest()` output above, direct run | **Pass** |
+- T2 — SLA calculation and ownership assignment
+- T3 — Finding status workflow
+- T4 — Retesting and remediation verification
+- T5 — Metrics and reporting calculations
 
-## Automated unit test coverage (backs up the table above)
+The objective is to verify the individual engine modules, including normal behaviour, validation, authorization, audit history, and protection against unintended mutation of input findings.
 
-```
-node --test tests/*.test.js
-# tests 79
-# pass 79
-# fail 0
-```
+## 2. Scope and test files
 
-| File | Tests | Pass |
+| Test group | Feature | Test file |
 |---|---|---|
-| sla.test.js | 8 | 8 |
-| workflow.test.js | 22 | 22 |
-| owner.test.js | 13 | 13 |
-| retest.test.js | 15 | 15 |
-| metrics.test.js | 16 | 16 (sanity-checks T2/T4-style scenarios via `computeMetrics`, e.g. overdue counting and SLA exclusion for `accepted_risk`/`false_positive`) |
-| **Total** | **79** | **79** |
+| T2 | SLA calculation | `tests/sla.test.js` |
+| T2 | Ownership assignment | `tests/owner.test.js` |
+| T3 | Status workflow | `tests/workflow.test.js` |
+| T4 | Retesting | `tests/retest.test.js` |
+| T5 | Metrics | `tests/metrics.test.js` |
 
-## Performance (Day 3 deliverable) — final number
+These are module-level automated tests. They do not, by themselves, establish that every route, database operation, or full application workflow has passed integration testing.
 
-Full pipeline — `scoreFinding` (Hareem) → `calcSla` → `assignOwner` → `computeMetrics` (Easha) — run end to end across 1000 synthetic findings, covering FR-3, FR-4, FR-5, FR-7 together:
+## 3. Test environment
 
-**~20.3 ms for 1000 findings** (see `full_bench.js` in the engine zip; earlier partial run without scoring was ~9.4 ms, see `bench.js`).
+Record the actual environment used when running the tests:
 
-Sanity-checked output on the same run: 70 Critical / 248 High / 332 Medium / 350 Low by priority, 650/1000 overdue, owners spread evenly across the 7 team prefixes plus Unassigned, 33.3% reopen rate on the synthetic mix — all internally consistent with the input data, confirming the three engine files compose correctly.
+- Runtime: Node.js
+- Test runner: Node.js built-in test runner (`node --test`)
+- Project: PatchPilot
+- Test data: test fixtures and synthetic finding objects defined by the test suites
 
-## Notes for the final report
+For a reproducible record, capture the Node.js version with `node --version` and the package version/configuration from the checked-out project.
 
-- Pass rate on aap's functions: **100% (79/79)**, well above the 80% acceptance threshold.
-- One bug was found and fixed during review: `retest.js` was rejecting evidence over 500 characters instead of truncating it (contradicted aap's own test). Now fixed — see the progress log.
-- T3 is written here as two sub-cases (3a allowed, 3b denied) since the spec's "accepted risk" case implies the authorization boundary matters, not just the happy path.
+## 4. Test cases
+
+### T2 — SLA calculation
+
+**Module:** `engine/sla.js`  
+**Tests:** `tests/sla.test.js`
+
+Verify that:
+
+1. Critical findings receive the default 7-day SLA.
+2. Custom SLA configuration overrides the default.
+3. A finding becomes overdue after its due date.
+4. Accepted-risk findings are excluded from overdue status.
+5. False-positive findings are excluded from overdue status.
+6. Fixed findings are excluded from overdue status.
+7. Missing `firstSeen` uses the current date.
+8. Unknown priority falls back to the Low-priority SLA.
+
+### T2 — Ownership assignment
+
+**Module:** `engine/owner.js`  
+**Tests:** `tests/owner.test.js`
+
+Verify that:
+
+1. Web assets are assigned to the Web Team.
+2. Database assets are assigned to the Database Team.
+3. App assets are assigned to the App Team.
+4. Network assets are assigned to the Network Team.
+5. Windows assets are assigned to the Windows Team.
+6. API assets are assigned to the API Team.
+7. File/storage assets are assigned to the Storage Team.
+8. Prefix matching is case-insensitive.
+9. Unknown or empty assets are assigned to Unassigned.
+10. Custom ownership rules override defaults.
+11. The assignment result includes an explanatory reason.
+
+### T3 — Status workflow
+
+**Module:** `engine/workflow.js`  
+**Tests:** `tests/workflow.test.js`
+
+Verify that:
+
+1. Authorized analysts and admins can start work where permitted.
+2. Admins can accept risk with a reason and a valid future end date.
+3. Analysts cannot perform admin-only risk acceptance.
+4. Accept-risk and false-positive actions require a reason.
+5. A finding cannot be marked fixed directly from an invalid state.
+6. Marking a finding fixed follows the awaiting-retest workflow.
+7. Invalid actions and roles are rejected.
+8. Successful transitions record audit events.
+9. The authenticated actor identity and timestamp cannot be forged by client-supplied data.
+10. Missing or blank authenticated actor identity is rejected.
+11. Invalid dates, malformed event history, and overlong reasons are rejected.
+12. Existing events are preserved and the original finding is not mutated.
+
+### T4 — Retesting
+
+**Module:** `engine/retest.js`  
+**Tests:** `tests/retest.test.js`
+
+Verify that:
+
+1. A successful retest changes the finding status to fixed.
+2. A failed retest reopens the finding.
+3. A failed retest calculates a fresh SLA deadline.
+4. A successful retest does not calculate a new SLA deadline.
+5. Evidence is trimmed and stored.
+6. Evidence longer than 500 characters is limited to the supported length.
+7. Missing or non-string evidence is rejected.
+8. Invalid retest results and invalid findings are rejected.
+9. Retest events are added while existing event history is preserved.
+10. The original `firstSeen` date is preserved after a failed retest.
+11. Custom SLA configuration is respected.
+12. Retesting cannot bypass remediation or repeat a verified fix.
+13. The original finding object is not modified.
+
+### T5 — Metrics
+
+**Module:** `engine/metrics.js`  
+**Tests:** `tests/metrics.test.js`
+
+Verify that:
+
+1. Total findings are counted correctly.
+2. Open, reopened, and active findings are counted according to the metric definitions.
+3. Fixed findings are counted correctly.
+4. Findings are grouped by priority and owner.
+5. Missing owners are grouped as Unassigned.
+6. Overdue findings are counted correctly.
+7. Fixed, accepted-risk, and false-positive findings are excluded from the SLA overdue calculation as appropriate.
+8. SLA compliance percentage is calculated correctly.
+9. Reopen rate is calculated correctly.
+10. Average time to fix is calculated from valid dates.
+11. Empty data and findings without valid fix dates produce safe zero values.
+12. Invalid findings input and invalid current dates are rejected.
+
+## 5. How to run
+
+Run the five suites from the repository root:
+
+```powershell
+node --test tests/sla.test.js tests/owner.test.js tests/workflow.test.js tests/retest.test.js tests/metrics.test.js
+```
+
+Run the project's configured test command separately:
+
+```powershell
+npm test
+```
+
+## 6. Recorded results
+
+On 28 November 2026, the five dedicated engine suites were run together:
+
+- Tests: 81
+- Passed: 81
+- Failed: 0
+
+A later `npm test` run after the `server/engine.js` integration changes did not pass completely:
+
+- `tests/t6_auth.test.js`: 7 passed, 0 failed
+- `tests/tfinal.test.js`: 12 passed, 4 failed
+- Overall configured test run: 19 passed, 4 failed
+
+The four failing cases were TF-3c (CSRF request aborted), TF-4 (CSV import returned HTTP 500), TF-10 (no open Critical finding available), and TF-7 (no findings available for persistence verification). The TF-10 and TF-7 failures may be downstream of the import failure; this has not yet been proven.
+
+Therefore, the dedicated module test result is 81/81 passing, but the latest full configured test run is **not fully passing**. Do not describe the current branch as fully integration-tested or merge-ready until the failures are diagnosed, fixed, and rerun.
+
+## 7. Limitations
+
+- The 81 passing tests establish the behaviour covered by the five dedicated module suites only.
+- They do not replace API, database persistence, frontend, or end-to-end verification.
+- No performance benchmark result is included here because no verified benchmark output was provided for this run.
+- Do not infer performance figures from test-suite execution duration.

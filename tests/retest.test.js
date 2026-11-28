@@ -12,7 +12,7 @@ function createFinding(overrides = {}) {
     id: 'F-101',
     asset: 'web-server-01',
     priority: 'High',
-    status: 'in_progress',
+    status: 'awaiting_retest',
     firstSeen: '2026-10-01',
     events: [],
     ...overrides
@@ -186,7 +186,7 @@ test('original finding is not modified', () => {
     FIXED_DATE
   );
 
-  assert.equal(finding.status, 'in_progress');
+  assert.equal(finding.status, 'awaiting_retest');
   assert.equal(finding.events.length, 0);
 });
 
@@ -200,4 +200,9 @@ test('custom SLA configuration is respected after failed retest', () => {
   );
 
   assert.equal(result.dueDate, '2026-11-12');
+});
+test('retest cannot bypass remediation or repeat a verified fix', () => {
+  for (const status of ['open','in_progress','fixed','reopened','accepted_risk','false_positive']) {
+    assert.equal(handleRetest(createFinding({status}), 'pass', 'test evidence', FIXED_DATE).error,'E_VALIDATION');
+  }
 });
